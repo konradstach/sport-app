@@ -1,7 +1,6 @@
 package com.example.sportapp.configuration;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,7 +21,6 @@ import javax.sql.DataSource;
 public class OAuth2Config extends AuthorizationServerConfigurerAdapter {
 
     @Autowired
-    @Qualifier("userDetailsService")
     private UserDetailsService userDetailsService;
 
     @Autowired
@@ -31,7 +29,7 @@ public class OAuth2Config extends AuthorizationServerConfigurerAdapter {
     @Autowired
     private DataSource dataSource;
 
-    private int expiration = 3600;
+    private int expiration = 60 * 60 * 24;
 
     // password encryptor
     @Bean
@@ -40,7 +38,7 @@ public class OAuth2Config extends AuthorizationServerConfigurerAdapter {
     }
 
     @Override
-    public void configure(AuthorizationServerEndpointsConfigurer configurer) throws Exception {
+    public void configure(AuthorizationServerEndpointsConfigurer configurer) {
         configurer
                 .authenticationManager(authenticationManager)
                 .userDetailsService(userDetailsService)
@@ -59,7 +57,7 @@ public class OAuth2Config extends AuthorizationServerConfigurerAdapter {
     }
 
     @Bean
-    public TokenStore tokenStore(){
+    public TokenStore tokenStore() {
         return new JdbcTokenStore(dataSource);
     }
 
